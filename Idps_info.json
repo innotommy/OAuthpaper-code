@@ -1,0 +1,54 @@
+{"facebook.com":{
+	"Username":"tommycall.text@gmail.com",
+	"Password":"Boston2021",
+	"Fill":{
+			"User-Type": "ID",
+			"Pass-Type": "ID",
+			"Form-User": "email",
+			"Form-Pass": "pass"
+	},
+	"Submit":{
+			"Button-Type": "ID",
+			"Button": "loginbutton"
+	},
+	"Grant":{
+			"Button-Type": "QuerySelector",
+			"Button": "div[aria-label*='ontinua']"
+	}
+},
+"twitter.com":{
+	"Username":"tommycall.text@gmail.com",
+	"Password":"Boston2021",
+	"Fill":{
+			"User-Type":"ID",
+			"Pass-Type":"ID",
+			"Form-User":"username_or_email",
+			"Form-Pass":"password"
+	},
+	"Submit":{
+			"Button-Type":"ID",
+			"Button":"allow"
+	},
+	"Grant":{
+			"Button-Type":"XPath",
+			"Button":"//div[contains(@aria-label,'ontinua')]"
+	}
+},
+"line.me":{
+	"Username":"tommycall.text@gmail.com",
+	"Password":"Boston2021",
+	"Fill":{
+			"User-Type":"exception",
+			"Pass-Type":"exception",
+			"Form-User":"fill%%Name%%tid%%tommycall.text@gmail.com%%login",
+			"Form-Pass":"fill%%Name%%tpasswd%%Boston2021%%login"
+	},
+	"Submit":{
+			"Button-Type":"XPath",
+			"Button":"//*[contains(text(), \"Log in\") or contains(@value,'Log in')]"
+	},
+	"Grant":{
+			"Button-Type":"XPath",
+			"Button":"//*[contains(text(), \"Allow\")]"
+	}
+}}

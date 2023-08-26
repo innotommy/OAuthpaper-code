@@ -1,0 +1,17 @@
+{"atlassian.com":{"Keywords":["redirect_uri","state","client_id","response_type"],"idphostname":"bitbucket.org","Url_Prefix":["bitbucket.org/site/oauth2/authorize?","bitbucket.org/api/"]},
+ "github.com":{"Keywords":["redirect_uri"],"idphostname":"github.com","Url_Prefix":["github.com/login/oauth/authorize?"]}, 
+ "vk.com":{"Keywords":["redirect_uri"],"idphostname":"vk.com","Url_Prefix":["oauth.vk.com/authorize","api.vk.com/oauth/authorize?"]},
+ "linkedin.com":{"Keywords":["redirect_uri","state","client_id","response_type"],"idphostname":"linkedin.com","Url_Prefix":["linkedin.com/oauth/v2/authorization?"]},
+ "line.me":{"Keywords":["redirect_uri","state","client_id","response_type"],"idphostname":"line.me","Url_Prefix":["access.line.me/oauth2/"]},
+ "ok.ru":{"Keywords":["redirect_uri","client_id","response_type"],"idphostname":"ok.ru","Url_Prefix":["connect.ok.ru/oauth/authorize"]},
+ "microsoftonline.com":{"Keywords":["redirect_uri","state","client_id","response_type"],"idphostname":"microsoftonline.com","Url_Prefix":["login.microsoftonline.com/common/oauth2/"]},
+ "live.com":{"Keywords":["redirect_uri","client_id","response_type"],"idphostname":"live.com","Url_Prefix":["login.live.com/oauth20_authorize.srf"]},
+ "facebook.com":{"Keywords":["redirect_uri","client_id"],"idphostname":"facebook.com","Url_Prefix":["/dialog/oauth"]},
+ "orcid.org":{"Keywords":["redirect_uri","client_id","response_type"],"idphostname":"orcid.org","Url_Prefix":["orcid.org/oauth/authorize?"]},
+ "slack.com":{"Keywords":["redirect_uri","state","client_id"],"idphostname":"slack.com","Url_Prefix":["slack.com/oauth"]},
+ "yandex.ru":{"Keywords":["redirect_uri","client_id","response_type"],"idphostname":"yandex.ru","Url_Prefix":["oauth.yandex.ru/authorize"]},
+ "yahoo.com":{"Keywords":["redirect_uri","client_id","response_type"],"idphostname":"yahoo.com","Url_Prefix":["api.login.yahoo.com/oauth2/request_auth?"]},
+ "reddit.com":{"Keywords":["redirect_uri","state","client_id","response_type"],"idphostname":"reddit.com","Url_Prefix":["/ssl.reddit.com/api/"]},
+ "twitter.com":{"Keywords":["oauth_token"],"idphostname":"twitter.com","Url_Prefix":["api.twitter.com/oauth/authenticate"]},
+ "kakao.com":{"Keywords":["redirect_uri","client_id","response_type"],"idphostname":"kakao.com","Url_Prefix":["kauth.kakao.com/oauth/authorize"]}
+}
