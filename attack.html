@@ -1,0 +1,60 @@
+<!doctype html>
+<head>
+    <title>{% block title %}{% endblock %}Login with {{ provider }}</title>
+</head>
+<body>
+    <a href="/">Home</a>
+    <h1>Login with {{ provider }}</h1>
+
+    <h2>Code & State</h2>
+    <p>Code <span id="code" style="font-family: monospace;">{{ code }}</span></p>
+    
+    <p>State <span id="state" style="font-family: monospace;">{{ state }}</span></p>
+
+    <h2>OPP Attack URL</h2>
+    <span id="attack_URL" style="font-family: monospace;">{{ attack_URL }}</span>
+    <br>
+    <button onclick="copyToClipboard()">Copy Attack URL</button>
+
+    <h2>Redeem request</h2>
+
+    <form action="/redeem">
+        <input type="hidden" name="state" value="{{ state }}">
+        <input type="hidden" name="code" value="{{ code }}">
+        <input type="hidden" name="test" value="genuine">
+        <button type="submit">Genuine Redirect URI</button>
+    </form>
+
+    <br>
+
+    <form action="/redeem">
+        <input type="hidden" name="state" value="{{ state }}">
+        <input type="hidden" name="code" value="{{ code }}">
+        <input type="hidden" name="test" value="code_injection">
+        <button type="submit">Code injection</button>
+    </form>
+
+    <br>
+
+    <form action="/redeem">
+        <input type="hidden" name="state" value="{{ state }}">
+        <input type="hidden" name="code" value="{{ code }}">
+        <input type="hidden" name="test" value="code_injection_path_confusion">
+        <button type="submit">Code injection + Path confusion</button>
+    </form>
+
+
+
+    <script>
+        function copyToClipboard() {
+            var copyText = document.getElementById("attack_URL");
+            var textArea = document.createElement("textarea");
+            textArea.value = copyText.textContent;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand("Copy");
+            console.log("Copied the text: " + textArea.value);
+            textArea.remove();
+        }
+    </script>
+</body>

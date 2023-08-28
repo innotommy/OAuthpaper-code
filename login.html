@@ -1,0 +1,36 @@
+<!doctype html>
+<head>
+    <title>{% block title %}{% endblock %}Login with {{ provider }}</title>
+</head>
+<body>
+    <a href="/">Home</a>
+    <h1>Login with {{ provider }}</h1>
+    <form action="/handleLogin">
+        <input type="hidden" name="state" value="{{ state }}">
+        <button type="submit">Sign-in with {{ provider }} </button>
+    </form>
+
+    <h2>Authorization request</h2>
+
+    <form action="/authorize">
+        <input type="hidden" name="state" value="{{ state }}">
+        <input type="hidden" name="test" value="genuine">
+        <button type="submit" id="genuine">Genuine Redirect URI</button>
+    </form>
+
+    <br>
+
+    <form action="/authorize">
+        <input type="hidden" name="state" value="{{ state }}">
+        <input type="hidden" name="test" value="code_injection">
+        <button type="submit"  id="code_injection">Code injection</button>
+    </form>
+
+    <br>
+
+    <form action="/authorize">
+        <input type="hidden" name="state" value="{{ state }}">
+        <input type="hidden" name="test" value="code_injection_path_confusion">
+        <button type="submit" id="code_injection_path_confusion">Code injection + Path confusion</button>
+    </form>
+</body>

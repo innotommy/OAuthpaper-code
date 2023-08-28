@@ -162,6 +162,11 @@ This will provide the total set of IdPs vulnerable to one of the Path confusion 
 
 ## How to run it
 
+Data set obtained from the previously provided set of site can be downloaded here:
+https://drive.google.com/file/d/1JKNcJu8sjCjY5MKPQIk3ar02AFSrpXzB/view?usp=sharing
+
+This data set can be used to test the analysis tool and identify the IdPs vulnerable to the injection of the Path Confusion attack
+
 Run the script: `python3 Analyze_Pathconfusion.py -f <Path comnfusion experiment result folder> -s <sites file>`
 
 ## Notice
@@ -176,17 +181,21 @@ The number of IdPs vulnerable represent the result reported in Section 5.2.
 
 ## How to run it
 The execution of the test is rather simple and does not involves any automation of the procedure.
-The client application is initiated and then the test is performed.
+The client application is initiated by running this command:
+`python3 Clientapp.py`
 
+The Client application has 3 button which allows to initiate the authorization request normally or with the PathConfusion or the OPP attack injection.
+The attacks are hardcoded in the application methods and this option is also provided for the redeem step.
+With the combination of these requests the full sets of cases for each IdP can be tested and inspected.
 
 ## Notice
-We provide the scheleton of a testing Client application we used to test each IdP, for each IdP it is necessary the creation of configuration file with the IdP which will include the registered redirect_uri and provide the Client_ID as well as the Client_secret.
+We provide the scheleton of a testing Client application (Facebook example) we used to test each IdP, for each IdP it is necessary the creation of configuration file with the IdP which will include the registered redirect_uri and provide the Client_ID as well as the Client_secret.
 
 # redirect URI Validation in Redeem Proces:
 
 ## How does it work
 By reusing the Client Application used to identify the IdPs vulnerable to the OPP attack we measured the IdPs which improperly validate the redirect_uri in the Redeem Process.
-We followed the same methodology of the previous step by injecting an OAuth code in the Authorization step and once we received the two OAuth code parameters we initiate the redeem step with the newly generated code by the IdP with an untouched flow. This will generate a difference between the redirect_uri used in the Authorization request(poisoned) and the one provided in the access token request. The IdPs that allows the flow to proceed are marked as vulnerable. This will provide the result of Section 6.2
+We followed the same methodology of the previous step by injecting an OAuth code in the Authorization step and once we received the two OAuth code parameters we initiate the redeem step with the newly generated code by the IdP with an untouched redeem request. This will generate a difference between the redirect_uri used in the Authorization request(poisoned) and the one provided in the Access Token request. The IdPs that allows the flow to proceed are marked as vulnerable. This will provide the result of Section 6.2
 
 
 The execution of the test is rather simple and does not involves any automation of the procedure.
