@@ -167,15 +167,15 @@ Example:
 
 
 #### Scripts arguments
-<sites file> file containg sites information (login pages) with OAuth trigger information for each IdP identified
+sites file: file containg sites information (login pages) with OAuth trigger information for each IdP identified
 
-<measurements name> experiment name used for log purpose
+measurements name: experiment name used for log purpose
 
-<attack list file> The attack list file contains a dictionary of attack strings where the name of the attribute would also represent the name of the folder under which all the result file associated with that attack string will be stored and the value field represent the attack string which will be injected in the OAuth flow.(Pathconfusion-attacklist.json provided in the repo)
+attack list file: The attack list file contains a dictionary of attack strings where the name of the attribute would also represent the name of the folder under which all the result file associated with that attack string will be stored and the value field represent the attack string which will be injected in the OAuth flow.(Pathconfusion-attacklist.json provided in the repo)
 
-<idps keywords> IdPs keywords are a set of keyword used to identify the Authorization request of the OAuth flow where to inject the Path confusion string.(idp_keywords.json provided in the repo)
+idps keywords: IdPs keywords are a set of keyword used to identify the Authorization request of the OAuth flow where to inject the Path confusion string.(idp_keywords.json provided in the repo)
 
-<idps informations> IdPs information file which contains the IdPs account informations and the login step to automate the login procedure.(Idps_info.json provided in the repo)
+idps informations: IdPs information file which contains the IdPs account informations and the login step to automate the login procedure.(Idps_info.json provided in the repo)
 
 
 # Path confusion result
