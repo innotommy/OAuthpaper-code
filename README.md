@@ -114,7 +114,7 @@ The output folder contains a series of files with the result for each error type
 1)Install NodeJS from https://nodejs.org/en/download/.
 Then, run the following command to install all the dependencies:
 
-npm install chrome-launcher chrome-remote-interface url-parse util tldjs path argparse puppeteer fs
+`npm install chrome-launcher chrome-remote-interface url-parse util tldjs path argparse puppeteer fs`
 
 Adjust the Chrome executable path in verifysites.js at line 81 to point to the Chrome executable file
 
