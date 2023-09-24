@@ -126,12 +126,6 @@ Eg:
 ## Notice
 The treshold to classify the IdPs as TopIdP is represented by the value at line 385 of the script Start-SitesVerification.py (>3 sites adoption).
 
-### need to be revised
-To simplify the reviewer work we provide the result of the run of the site verification step for the sites included in the file InitialsetofSites.json.
-The results files are included in the result.zip
-#####
-
-
 # Path confusion Experiment
 
 The script receives the list of sites where to inject the Path Confusion and logs all the network communications
