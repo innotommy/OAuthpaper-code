@@ -78,7 +78,7 @@ async function Save_textfile(name,content){
             '--password-store=basic',
             '--ignore-certificate-errors'],
             headless: false,
-            executablePath: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'});
+            executablePath: '/bin/google-chrome-stable'});
     
     const page = await browser.newPage();
     

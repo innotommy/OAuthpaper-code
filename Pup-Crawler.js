@@ -398,7 +398,7 @@ async function AnalizeResult_New_Window(browser,IDP,page,newwindow,domainbegin,i
             '--proxy-server=http://127.0.0.1:7777',
             '--ignore-certificate-errors'],
             headless: false,
-            executablePath: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'});
+            executablePath: '/bin/google-chrome-stable'});
     const page = await browser.newPage();
     try{
         await page.goto(SITE, {timeout:120000, waitUntil: 'networkidle2'});

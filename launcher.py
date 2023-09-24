@@ -103,11 +103,11 @@ if __name__ == '__main__':
                     cmd  = f'python3 {args.crawler} -t {site} {args.arguments}'
                     logger.info(f'Testing {site}')
                     try:
-                        # p = subprocess.Popen(shlex.split(cmd))
-                        # processes[site] = p
-
-                        p = subprocess.Popen(shlex.split('python3 sleep-print.py ' + site))
+                        p = subprocess.Popen(shlex.split(cmd))
                         processes[site] = p
+
+                        #p = subprocess.Popen(shlex.split('python3 sleep-print.py ' + site))
+                        #processes[site] = p
 
                         print('\t\t >>>', cmd)
                     except subprocess.TimeoutExpired as e:

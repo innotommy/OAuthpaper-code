@@ -79,10 +79,14 @@ The launcher will test the websites in the file concurrently (up to the maximum 
 
 ### Workflow
 
-The structure of the output JSON file of the `idps-identification.py` script is different from the one needed for the next step of **OAuth trigger evaluation**, therefore, we need to convert the JSON file to the correct format. To do so, we use the `convert.sh` script, which:
+The structure of the output JSON file of the `idps-identification.py` script is different from the one needed for the next step of **OAuth trigger evaluation**, therefore, we need to convert the JSON file to the correct format. To do so, we use the `convert.sh` script with the same list pof sites used before to identify the OAuth triggers.
 
-1. Calls `generate-sites-files.py` to generate the single JSON files with the structure needed by the next step (requires a Tranco ranking csv file in the `lists` folder called `sites.csv`).
-2. Calls `merge-sites-files.py` to merge the single JSON files into a single one.
+Run the script: `/conver.sh <sites_file>`
+
+which:
+1. Calls `generate-sites-files.py` to generate the single JSON files with the structure needed by the next step
+
+2. Calls `merge-sites-files.py` to merge the single JSON files into a single one (json/sites.json).
 
 ## Notice
 
@@ -91,7 +95,8 @@ The script has a high number of false-positives rates. In our research, this has
 
 # OAuth trigger validation
 
-receives a list of site's login pages and verifies the OAuth button identified to verify they are able to initiate an OAuth flow. The result is the list of site's OAuth trigger evaluated and the list of TOP IdPs.
+Receives a list of site's login pages and verifies the OAuth button identified to verify they are able to initiate an OAuth flow.
+The result are the list of site's OAuth trigger evaluated (Verified_Sites.json) and the list of TOP IdPs(Top_Idps.json).
 
 ## How does it work
 
@@ -102,24 +107,42 @@ On a high level, the script does the following:
 3)if the change occur it evaluates the landing page and searches for login page identifier as the presence of login button a OAuth identifiers in the page url
 
 Output:
-The result folder contains a series of files with the result for each error type. in the same folder of the script the file Verified_Sites.json will contains the site's login pages with the OAuth trigger correctly functioning. In the same folder the file Top_Idps.json will contains the list of most used IdPs among the sites inspected.
+The output folder contains a series of files with the result for each error type. In the script folder the file Verified_Sites.json will contains the site's login pages with the OAuth trigger correctly functioning and the file Top_Idps.json will contains the list of most used IdPs among the sites inspected.
 
 ## How to run it
 
-Run the script: `python3 Start-SitesVerification.py -s <sites file> -o <output folder>`
+1)Install NodeJS from https://nodejs.org/en/download/.
+Then, run the following command to install all the dependencies:
+
+npm install chrome-launcher chrome-remote-interface url-parse util tldjs path argparse puppeteer fs
+
+Adjust the Chrome executable path in verifysites.js at line 81 to point to the Chrome executable file
+
+Run the script: `python3 Start-SitesVerification.py <sites file.json> <output folder>`
+
+Eg:
+`python3 Start-SitesVerification.py json/sites.json outputfolder`
 
 ## Notice
-The treshold to classify the IdPs as top IdP is represented by the value at line 385 of the script source code.
+The treshold to classify the IdPs as TopIdP is represented by the value at line 385 of the script Start-SitesVerification.py (>3 sites adoption).
 
+### need to be revised
 To simplify the reviewer work we provide the result of the run of the site verification step for the sites included in the file InitialsetofSites.json.
-The results file are included in the folder result
+The results files are included in the result.zip
+#####
+
 
 # Path confusion Experiment
 
 The script receives the list of sites where to inject the Path Confusion and logs all the network communications
 
 ## Notice
-Before starting the experiment the IdPs of interest should be selected and for those an account and the login steps needs to codificated in the IdPs_info file (step IdP credentials) only the OAuth trigger of the selected IdPs should be present in the sites file to limit the number of undesired measurements.
+Before starting the experiment the IdPs of interest should be selected and for those an account and the login steps needs to be codificated in the IdPs_info file (step IdP credentials).
+
+To simplify the reviewers job we included in the file idps_info.json the login information of 3 IdPs (Facebook,line,twitter)
+The structure of the file is described below.
+
+We provide a limited number of IdPs info to avoid any potential blockage by the IdPs for suspicious login from unrecognized location which could negatively affect other ongoing research project which currently uses these test accounts.
 
 ## IdPs_info file:
 
@@ -139,20 +162,27 @@ Sleep is composed of the action sleep which represent a pause in the login flow 
 
 ## How to run it
 
-Run the script: `python3 Start-PathConfusion-exp.py - s <sites file> -m <measurements name> -a <attack list file> -j <idps keywords> -i <idps informations>`
+Before Starting the experimt the Mitmproxy should be installed in the system.
+The installation instruction for each operative system could be found at https://mitmproxy.org/
+The required version is 9.0.1
+
+Run the script: `python3 Start-PathConfusion-exp.py <sites file> <measurements name> <attack list file> <idps keywords> <idps informations>`
+
+Example:
+`python3 Start-PathConfusion-exp.py Verified_Sites.json PathConfusion-experiment Pathconfusion-attacklist.json idp_keywords.json Idps_info.json`
+
 
 #### Scripts arguments
--m experiment name used for log purpose
+<sites file> file containg sites information (login pages) with OAuth trigger information for each IdP identified
 
--a The attack list file contains a dictionary of attack strings where the name of the attribute would also represent the name of the folder under which all the result file associated with that attack string will be stored and the value field represent the attack string which will be injected in the OAuth flow.
+<measurements name> experiment name used for log purpose
 
--j IdPs keywords are a set of keyword used to identify the Authorization request of the OAuth flow where to inject the Path confusion string
+<attack list file> The attack list file contains a dictionary of attack strings where the name of the attribute would also represent the name of the folder under which all the result file associated with that attack string will be stored and the value field represent the attack string which will be injected in the OAuth flow.(Pathconfusion-attacklist.json provided in the repo)
 
--i IdPs information file which contains the IdPs account informations and the login step to automate the login procedure
+<idps keywords> IdPs keywords are a set of keyword used to identify the Authorization request of the OAuth flow where to inject the Path confusion string.(idp_keywords.json provided in the repo)
 
-## Notice
+<idps informations> IdPs information file which contains the IdPs account informations and the login step to automate the login procedure.(Idps_info.json provided in the repo)
 
-We provide a limited number of IdPs info in the IdPs info file to avoid any potential blockage by the IdPs for souspicious login from unrecognized location which could negatively affect other ongoing research project which uses these accounts.
 
 # Path confusion result
 
@@ -161,16 +191,17 @@ The script will process all the measurements result file contained in the folder
 This will provide the total set of IdPs vulnerable to one of the Path confusion string tested as reported in Section 4.3.
 
 ## How to run it
-
-Data set obtained from the previously provided set of site can be downloaded here:
-https://drive.google.com/file/d/1JKNcJu8sjCjY5MKPQIk3ar02AFSrpXzB/view?usp=sharing
-
-This data set can be used to test the analysis tool and identify the IdPs vulnerable to the injection of the Path Confusion attack
-
-Run the script: `python3 Analyze_Pathconfusion.py -f <Path comnfusion experiment result folder> -s <sites file>`
+Run the script: `python3 Analyze_Pathconfusion.py <Path comnfusion experiment result folder> <sites file>`
 
 ## Notice
-To help in the review process we provide the folder Pathconfusion-measurement where a limited number of results file from sites (Smallsetofsites.json). This one could be used to effectively validate our analysis result tool.
+To simplify the reviewers job we provide the data obtained from the execution of the previous command on a small subset of tested sites here:
+https://drive.google.com/file/d/1JKNcJu8sjCjY5MKPQIk3ar02AFSrpXzB/view?usp=sharing
+
+
+We provide this data due to the fact that potentially no IdP should be found vulnerable thanks to our previous responsible disclosure to all the IdPs found to be vulnerable.
+This data set can be used as input for the Analyze_Pathconfusion.py script to effectively validate the script functionality using this command:
+
+Run the script: `python3 Analyze_Pathconfusion.py Pathconfusion-measurement Smallsetofsites.json`
 
 # OAuth Parameter Pollution:
 
@@ -181,20 +212,28 @@ The number of IdPs vulnerable represent the result reported in Section 5.2.
 
 ## How to run it
 The execution of the test is rather simple and does not involves any automation of the procedure.
-The client application is initiated by running this command:
-`python3 Clientapp.py`
+
+Before running the script a folder named templates need to be created and the files attack.html and login.html should be placed inside of it
+The client application (present in the upper folder of templates) is then initiated by running this command:
+`python3 facebook.py`
 
 The Client application has 3 button which allows to initiate the authorization request normally or with the PathConfusion or the OPP attack injection.
 The attacks are hardcoded in the application methods and this option is also provided for the redeem step.
-With the combination of these requests the full sets of cases for each IdP can be tested and inspected.
+Any changes to these methods should be performed in the application code.
+With the combination of the available requests the full sets of cases for each IdP can be tested and inspected.
 
 ## Notice
-We provide the scheleton of a testing Client application (Facebook example) we used to test each IdP, for each IdP it is necessary the creation of configuration file with the IdP which will include the registered redirect_uri and provide the Client_ID as well as the Client_secret.
+We provide only the scheleton of a testing Client application (Facebook for example) we used to test each IdP.
+For each IdP it is necessary the creation of a new configuration file with the IdP which will include the registered redirect_uri and provide the Client_ID as well as the Client_secret that should be included in the application code to work properly.
+For facebook the instruction to create such configuration could be found here:
+https://developers.facebook.com/docs/facebook-login/guides/advanced/manual-flow
+
+Once the application parameters (line 16 to 25) has been included the script can be run and the experiment could start by using the provided button in the web interface
 
 # redirect URI Validation in Redeem Proces:
 
 ## How does it work
-By reusing the Client Application used to identify the IdPs vulnerable to the OPP attack we measured the IdPs which improperly validate the redirect_uri in the Redeem Process.
+By reusing the Client Application used in the previous step to identify the IdPs vulnerable to the OPP attack we measured the IdPs which improperly validate the redirect_uri in the Redeem Process.
 We followed the same methodology of the previous step by injecting an OAuth code in the Authorization step and once we received the two OAuth code parameters we initiate the redeem step with the newly generated code by the IdP with an untouched redeem request. This will generate a difference between the redirect_uri used in the Authorization request(poisoned) and the one provided in the Access Token request. The IdPs that allows the flow to proceed are marked as vulnerable. This will provide the result of Section 6.2
 
 
