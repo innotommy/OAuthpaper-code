@@ -15,7 +15,7 @@ On a high level, the script does the following:
 
 To detect a login page, the script looks for the following:
 
-- Searches for links that contain some keywords (e.g., `/signin`, `/login`).
+- Searches for links that contain some keywords (e.g., `/signin', `/login`).
 - Checks if the current page contains an input field of type `password`.
 
 ### OAuth URLs and buttons identification
@@ -24,8 +24,8 @@ To detect the OAuth URLs and buttons, the script looks for the following:
 
 For each **provider**:
 
-- Search for links containing the **provider** name and some keywords (e.g., `auth`, `login`, `signin`).
-- Searches for specific HTML tags (`a`, `input`, and `button`) that contain the **provider** name and some keywords (e.g., `auth`, `login`, `signin`).
+- Search for links containing the **provider** name and some keywords (e.g., `auth`, `login`, `signin').
+- Searches for specific HTML tags (`a', `input`, and `button`) that contain the **provider** name and some keywords (e.g., `auth`, `login`, `signin').
   - If a tag is not found, it optionally searches through all the other HTML tags
 
 **Note**: the script makes heavy use of **blacklists** to avoid false positives. The blacklists are compiled by observing the results of the script while debugging and are not exhaustive.
@@ -38,9 +38,13 @@ For each **provider**:
 
 Run the script: `python3 idps-identification.py -t <target>`
 
+E.g.:
+`python3 idps-identification.py -t imdb.com`
+`python3 idps-identification.py -t medium.com`
+
 #### Script arguments
 
-```bash
+"`bash
   -h, --help            show this help message and exit
   -t TARGET, --target TARGET
                         Target website
@@ -58,13 +62,19 @@ Run the script: `python3 idps-identification.py -t <target>`
 
 ### On a list of websites
 
-Run the script: `python3 launcher.py --sites <sites_file>`
+1) Obtain the list of sites:
+From the Tranco site, it is possible to download the most recent list of the Top 1 million websites:
+https://tranco-list.eu
+
+The script expects to receive a list of sites with the same Tranco list format, although a slice of the list (e.g. first 30 sites) could be provided to the script.
+
+2) Run the script: `python3 launcher.py --sites <sites_file>`
 
 The launcher will test the websites in the file concurrently (up to the maximum number of concurrent tests).
 
 #### Launcher arguments
 
-```bash
+"`bash
   -h, --help            show this help message and exit
   -s SITES, --sites SITES
                         Sites list
@@ -79,9 +89,9 @@ The launcher will test the websites in the file concurrently (up to the maximum 
 
 ### Workflow
 
-The structure of the output JSON file of the `idps-identification.py` script is different from the one needed for the next step of **OAuth trigger evaluation**; therefore, we need to convert the JSON file to the correct format. To do so, we use the `convert.sh` script with the same list pof sites used before to identify the OAuth triggers.
+The structure of the output JSON file of the `idps-identification.py` script differs from the one needed for the next step of **OAuth trigger evaluation**; therefore, we need to convert the JSON file to the correct format. To do so, we use the `convert.sh` script with the same list of sites used before to identify the OAuth triggers.
 
-Run the script: `/conver.sh <sites_file>`
+Run the script: `/convert.sh <sites_file>`
 
 which:
 1. Calls `generate-sites-files.py` to generate the single JSON files with the structure needed by the next step
@@ -90,7 +100,7 @@ which:
 
 ## Notice
 
-The script has a high number of false-positives rates. In our research, this has not been a problem since this was only the first step and, in the next one, we used an automated browser to click on the buttons detected by this script to check whether they are OAuth buttons or not. In this script, we prioritized not missing any OAuth button, even if this means having many false positives. If this script is used for other purposes, improving the blacklists to reduce the false-positives rate is recommended.
+The script has a high number of false-positives rates. In our research, this has not been a problem since this was only the first step and, in the next one, we used an automated browser to click on the buttons detected by this script to check whether they are OAuth buttons or not. In this script, we prioritized not missing any OAuth button, even if this means having many false positives. Improving the blacklists to reduce the false-positives rate is recommended if this script is used for other purposes.
 
 
 # OAuth trigger validation
@@ -107,28 +117,34 @@ On a high level, the script does the following:
 3)if the change occurs, it evaluates the landing page and searches for login page identifier as the presence of the login button and OAuth identifiers in the page URL
 
 Output:
-The output folder contains a series of files with the result for each error type. In the script folder, the file Verified_Sites.json will include the site's login pages with the OAuth trigger correctly functioning, and the file Top_Idps.json will contain the list of most used IdPs among the sites inspected
+The output folder contains a series of files with the result for each error type. In the script folder, the file Verified_Sites.json will include the site's login pages with the OAuth trigger correctly functioning and the file Top_Idps.json will contain the list of most used IdPs among the sites inspected.
 
 ## How to run it
 
 1)Install NodeJS from https://nodejs.org/en/download/.
 Then, run the following command to install all the dependencies:
 
-`npm install chrome-launcher chrome-remote-interface url-parse util tldjs path argparse puppeteer fs`
+npm install chrome-launcher chrome-remote-interface url-parse until tldjs path argparse puppeteer fs
 
 Adjust the Chrome executable path in verifysites.js at line 81 to point to the Chrome executable file
-
 Run the script: `python3 Start-SitesVerification.py <sites file.json> <output folder>`
 
-Eg:
+The list of sites that should be provided to the Start-SitesVerification is the result of the execution of the commands described above (the result of convert.sh), and it is stored in json/sites.json
+
+E.g.:
 `python3 Start-SitesVerification.py json/sites.json outputfolder`
+
+If the reviewers want to skip the steps mentioned above (OAuth URL and button identification), the Smallsetofsites.json could also be used to verify the script's functioning by running this command:
+
+`python3 Start-SitesVerification.py Smallsetofsites.json outputfolder`
+
 
 ## Notice
 The threshold to classify the IdPs as TopIdP is represented by the value at line 385 of the script Start-SitesVerification.py (>3 sites adoption).
 
 # Path confusion Experiment
 
-The script receives the list of sites where to inject the Path Confusion and logs all the network communications
+The script receives the list of sites where to inject the Path Confusion and logs all the network communications.
 
 ## Notice
 Before starting the experiment, the IdPs of interest should be selected, and for those, an account and the login steps need to be codified in the IdPs_info file (step IdP credentials).
@@ -149,9 +165,9 @@ The exception type allows flexibility in the configuration of the action perform
 e.g:fill%%Name%%loginfmt%%test@example.com##sleep3##click%%ID%%idSIButton9%%login##sleep3"
 this exception allows one to fill out the username form and click over the button with ID idSIButton9 before filling the password field.
 
-The exception could contain any set of instructions among: fill, click, or sleep.
+The exception could contain any set of instructions among fill, click, or sleep.
 Fill is composed of the action fill the separator %% the *-type the separator %% the content of the fill action.
-Click is composed of the action click the separator %% the *-type the separator %% the attribute  separator %% the loginstep either Login or Grant
+Click is composed of the action click the separator %% the *-type the separator %% the attribute  separator %% the login step either Login or Grant
 Sleep is composed of the action sleep, which represents a pause in the login flow and the number of seconds of the pause.
 
 ## How to run it
@@ -167,15 +183,15 @@ Example:
 
 
 #### Scripts arguments
-sites file: file containing sites information (login pages) with OAuth trigger information for each IdP identified
+<sites file> file containing sites information (login pages) with OAuth trigger information for each IdP identified
 
-measurements name: experiment name used for log purpose
+<measurements name> experiment name used for log purpose
 
-attack list file: The attack list file contains a dictionary of attack strings where the name of the attribute would also represent the name of the folder under which all the result file associated with that attack string will be stored and the value field represents the attack string which will be injected in the OAuth flow.(Pathconfusion-attacklist.json provided in the repo)
+<attack list file> The attack list file contains a dictionary of attack strings where the name of the attribute would also represent the name of the folder under which all the result files associated with that attack string will be stored, and the value field represents the attack string which will be injected in the OAuth flow. (Pathconfusion-attacklist.json provided in the repo)
 
-idps keywords: IdPs keywords are a set of keywords used to identify the Authorization request of the OAuth flow where to inject the Path confusion string.(idp_keywords.json provided in the repo)
+<idps keywords> IdPs keywords are a set of keywords used to identify the Authorization request of the OAuth flow where to inject the Path confusion string. (idp_keywords.json provided in the repo)
 
-idps informations: IdPs information file which contains the IdPs account information and the login step to automate the login procedure.(Idps_info.json provided in the repo)
+<idps informations> IdPs information file, which contains the IdPs account information and the login step to automate the login procedure. (Idps_info.json provided in the repo)
 
 
 # Path confusion result
@@ -222,6 +238,16 @@ We provide only the skeleton of a testing Client application (Facebook, for exam
 For each IdP it is necessary to create a new configuration file with the IdP, which will include the registered redirect_uri and provide the Client_ID and the Client_secret that should be included in the application code to work correctly.
 For Facebook, the instructions to create such a configuration could be found here:
 https://developers.facebook.com/docs/facebook-login/guides/advanced/manual-flow
+
+Github:
+https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app
+
+OK.ru:
+https://apiok.ru/en/ext/oauth/
+
+LinkedIn:
+https://learn.microsoft.com/en-us/linkedin/shared/authentication/authorization-code-flow?tabs=HTTPS1
+
 
 Once the application parameters (line 16 to 25) has been included, the script can be run, and the experiment could start by using the provided button in the web interface
 
