@@ -91,7 +91,9 @@ The launcher will test the websites in the file concurrently (up to the maximum 
 
 The structure of the output JSON file of the `idps-identification.py` script differs from the one needed for the next step of **OAuth trigger evaluation**; therefore, we need to convert the JSON file to the correct format. To do so, we use the `convert.sh` script with the same list of sites used before to identify the OAuth triggers.
 
-Run the script: `/convert.sh <sites_file>`
+Run the script: `/convert.sh <sites_file_list>`
+
+The sites file list that is provided to the convert.sh script should follow the same format of the Tranco List
 
 which:
 1. Calls `generate-sites-files.py` to generate the single JSON files with the structure needed by the next step
