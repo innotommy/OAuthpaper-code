@@ -26,7 +26,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(prog='launcher.py', description='Launch the crawler on a list of sites')
 
     parser.add_argument('-s', '--sites',
-        help='Sites list', required=True)
+        help='Sites list in csv format with two columns <ranking,domain>', required=True)
     parser.add_argument('-m', '--max',        default=MAX,
         help=f'Maximum number of sites to test concurrently (default: {MAX})')
     parser.add_argument('-a', '--arguments',  default='',
@@ -59,7 +59,7 @@ if __name__ == '__main__':
         logger.info(f'Already tested sites ({len(tested)}): {", ".join(tested[:min(len(tested), 10)])}' +
             f'... and {len(tested) - min(len(tested), 10)} more')
 
-    blacklist = ['google', 'facebook', 'amazon', 'twitter', '.gov', 'acm.com', 'jstor.org', 'arxiv']
+    denylist = ['google', 'facebook', 'amazon', 'twitter', '.gov', 'acm.com', 'jstor.org', 'arxiv']
 
     sites = []
     try:
@@ -71,7 +71,7 @@ if __name__ == '__main__':
         processes = {}
 
         for site in sites:
-            if any(i in site for i in blacklist):
+            if any(i in site for i in denylist):
                 continue
             try:
                 rank = int(site.strip().split(',')[0])

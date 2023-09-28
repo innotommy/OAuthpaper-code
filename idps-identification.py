@@ -121,7 +121,7 @@ def get_links(page_url, html, only_internal=True):
 
             elif not only_internal:
                 _url = clean_url(urldefrag(url)[0])
-                if any([i in _url for i in BLACKLISTED_DOMAINS]):
+                if any([i in _url for i in DENYLISTED_DOMAINS]):
                     continue
 
                 links.append(_url)
@@ -141,7 +141,7 @@ def get_source_code_links(url, html):
 
     # Find links in the source code using regular expressions
     regex_links = re.findall("((?:https?:\/\/|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>\"\']+|\(([^\s()<>\"\']+|(\([^\s()<>\"\']+\)))*\))+(?:\(([^\s()<>\"\']+|(\([^\s()<>\"\']+\)))*\)|[^\s`!()\[\]{};:'\".,<>?]))", html)
-    links = [''.join(link) for link in regex_links if not any([i in link for i in BLACKLISTED_DOMAINS])]
+    links = [''.join(link) for link in regex_links if not any([i in link for i in DENYLISTED_DOMAINS])]
 
     soup = BeautifulSoup(html, 'html.parser')
     # and in tags that have an href
@@ -184,13 +184,13 @@ def get_source_code_links(url, html):
     
     return links
 
-def add_to_queue(url, exclude_blacklisted=True):
+def add_to_queue(url, exclude_denylisted=True):
     """
     Add a url to the queue if it is not already in the queue
     and if its template is not already in the visited list.
     """
     try:
-        if exclude_blacklisted and any([i in url for i in BLACKLISTED_PATTERNS]):
+        if exclude_denylisted and any([i in url for i in DENYLISTED_PATTERNS]):
             return
         domain  = get_domain(url)
 
@@ -298,12 +298,12 @@ def get_login_url(urls):
         cleaned_url = url.replace('_', '').replace('-', '').replace('.', '').lower()
         # logger.info(f'{bcolors.OKGREEN}[+]{bcolors.ENDC} {url}')
 
-        blacklist = ['/hc/', 'facebook', 'google']
+        denylist = ['/hc/', 'facebook', 'google']
 
         if '/signin' in cleaned_url or \
             '/login' in cleaned_url and \
             '/join'  in cleaned_url and  \
-            not any(i in cleaned_url for i in blacklist):
+            not any(i in cleaned_url for i in denylist):
             # logger.info(f'Login url found: {bcolors.OKGREEN}{url}{bcolors.ENDC} because contains /login or /signin')
             return url
 
@@ -312,7 +312,7 @@ def get_login_url(urls):
 
         if 'signin' in cleaned_url or \
             'login' in cleaned_url and \
-            not any(i in cleaned_url for i in blacklist):
+            not any(i in cleaned_url for i in denylist):
             # logger.info(f'Login url found: {bcolors.OKGREEN}{url}{bcolors.ENDC} because contains login or signin')
             return url
     return ''
@@ -340,21 +340,21 @@ def get_oauth_link(urls, provider):
     """
     for url in urls:
         cleaned_url = url.replace('_', '').replace('-', '').replace('.', '').lower()
-        blacklist = [
+        denylist = [
             'itunes.apple', 'play.google', 'googleapis', 'googleads', 'doubleclick', 'googletagmanager.com', 'apis.google.com', '/hc/', 'assets', '.gif', '.jpeg', '.jpg', '.png', '.css', '.js',
             '/gsi/style', '/gsi/client', 'captcha', 'designing'
         ]
 
-        blacklisted_extensions = ['.gif', '.jpeg', '.jpg', '.png', '.css', '.js', '.svg', '.woff', '.woff2', '.ttf', '.eot', '.otf', '.ico', '.xml', '.json', '.txt']
+        denylisted_extensions = ['.gif', '.jpeg', '.jpg', '.png', '.css', '.js', '.svg', '.woff', '.woff2', '.ttf', '.eot', '.otf', '.ico', '.xml', '.json', '.txt']
         parsed = urlparse(cleaned_url)
-        if parsed.path.endswith(tuple(blacklisted_extensions)):
+        if parsed.path.endswith(tuple(denylisted_extensions)):
             return ''
 
-        # Expand blacklist for specific providers
-        blacklist = extend_blacklist(provider, blacklist)
+        # Expand denylist for specific providers
+        denylist = extend_denylist(provider, denylist)
 
         if provider in cleaned_url and \
-            not any(x in url for x in blacklist) and \
+            not any(x in url for x in denylist) and \
             ( 'auth' in cleaned_url or \
                 'login' in cleaned_url or\
                 'account' in cleaned_url or\
@@ -388,11 +388,11 @@ def is_oauth_tag(tag, provider):
             #logger.info(str(tag))
             pass
 
-    blacklist = [
+    denylist = [
         'itunesapple', 'playgoogle', 'googleapis', 'googleads', 'doubleclick', 'googletagmanagercom', 'apisgooglecom',
         'captcha', 'designing']
-    # Expand blacklist for specific providers
-    blacklist = extend_blacklist(provider, blacklist)
+    # Expand denylist for specific providers
+    denylist = extend_denylist(provider, denylist)
 
     combined = combined.lower().replace('\n', '').replace('-', '').replace('.', '').replace('_', '').strip()
     while '  ' in combined:
@@ -400,7 +400,7 @@ def is_oauth_tag(tag, provider):
 
     if (
         provider in combined and
-        not any(x.replace('.', '') in combined for x in blacklist) and
+        not any(x.replace('.', '') in combined for x in denylist) and
         any(x in combined for x in OAUTH_KEYWORDS)):
         return True
 
@@ -454,37 +454,37 @@ def url_to_filename(url):
             name += c
     return name
 
-def extend_blacklist(provider, blacklist):
+def extend_denylist(provider, denylist):
     '''
-    Extend the blacklist with specific
+    Extend the denylist with specific
     patterns for the current provider.
     '''
     if provider == 'ok':
-        blacklist.extend(['facebook', 'token', 'cookie', 'Token'])
+        denylist.extend(['facebook', 'token', 'cookie', 'Token'])
         # OK has a lot of false positives, so we also add all the other providers
-        blacklist.extend([provider.lower() for provider in PROVIDERS if provider.lower() != 'ok'])
+        denylist.extend([provider.lower() for provider in PROVIDERS if provider.lower() != 'ok'])
     if provider == 'line':
-        blacklist.extend(['inline', 'streamline', 'guideline', 'offline', 'outline', 'online', 'underline', 'timeline', 'line-height', 'line-width'])
+        denylist.extend(['inline', 'streamline', 'guideline', 'offline', 'outline', 'online', 'underline', 'timeline', 'line-height', 'line-width'])
     if provider == 'google':
-        blacklist.extend(['playgooglecom', 'analytics', '/gsi/style'])
+        denylist.extend(['playgooglecom', 'analytics', '/gsi/style'])
     if provider == 'amazon':
-        blacklist.extend(['amazonawscom'])
+        denylist.extend(['amazonawscom'])
     if provider == 'stackoverflow':
-        blacklist.extend(['/question/'])
+        denylist.extend(['/question/'])
     if provider == 'facebook':
-        blacklist.extend(['sharerphp'])
+        denylist.extend(['sharerphp'])
     if provider == 'linkedin':
-        blacklist.extend(['share'])
+        denylist.extend(['share'])
     if provider == 'microsoft':
-        blacklist.extend(['jsdisabled'])
+        denylist.extend(['jsdisabled'])
     if provider == 'reddit':
-        blacklist.extend(['submit'])
+        denylist.extend(['submit'])
     if provider == 'yahoo':
-        blacklist.extend(['analytics'])
+        denylist.extend(['analytics'])
     if provider == 'twitter':
-        blacklist.extend(['intent'])
+        denylist.extend(['intent'])
 
-    return blacklist
+    return denylist
 
 def remove_query_string(url):
     """
@@ -637,19 +637,19 @@ MAX   = 10
 USER_AGENT = f'Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/116.0'
 
 # Regex to avoid requesting URLs that might cause a logout
-LOGOUT_BLACKLIST_REGEX = re.compile(
+LOGOUT_DENYLIST_REGEX = re.compile(
     '(sign|log|opt)[+-_]*(out|off)|leave',
     re.IGNORECASE
 )
 
-BLACKLISTED_PATTERNS = [
+DENYLISTED_PATTERNS = [
     '/hc/',
     'https://support.', 'http://support.',
     'https://help.', 'http://help.',
     
 ]
 
-BLACKLISTED_DOMAINS = [
+DENYLISTED_DOMAINS = [
     'doubleclick.net', 'googleadservices.com',
     'google-analytics.com', 'googletagmanager.com',
     'googletagservices.com', 'googleapis.com',
@@ -786,7 +786,7 @@ if __name__ == '__main__':
             while should_continue() and len(urls['login']) == 0:
                 url = get_url_from_queue()
 
-                if LOGOUT_BLACKLIST_REGEX.search(url):
+                if LOGOUT_DENYLIST_REGEX.search(url):
                     continue
 
                 browser.get(url)

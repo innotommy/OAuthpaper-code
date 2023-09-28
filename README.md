@@ -15,7 +15,7 @@ On a high level, the script does the following:
 
 To detect a login page, the script looks for the following:
 
-- Searches for links that contain some keywords (e.g., `/signin', `/login`).
+- Searches for links that contain some keywords (e.g., `/signin`, `/login`).
 - Checks if the current page contains an input field of type `password`.
 
 ### OAuth URLs and buttons identification
@@ -25,10 +25,10 @@ To detect the OAuth URLs and buttons, the script looks for the following:
 For each **provider**:
 
 - Search for links containing the **provider** name and some keywords (e.g., `auth`, `login`, `signin').
-- Searches for specific HTML tags (`a', `input`, and `button`) that contain the **provider** name and some keywords (e.g., `auth`, `login`, `signin').
+- Searches for specific HTML tags (`a`, `input`, and `button`) that contain the **provider** name and some keywords (e.g., `auth`, `login`, `signin').
   - If a tag is not found, it optionally searches through all the other HTML tags
 
-**Note**: the script makes heavy use of **blacklists** to avoid false positives. The blacklists are compiled by observing the results of the script while debugging and are not exhaustive.
+**Note**: the script makes heavy use of **denylists** to avoid false positives. The denylists are compiled by observing the results of the script while debugging and are not exhaustive.
 
 ## How to run it
 
@@ -44,7 +44,7 @@ E.g.:
 
 #### Script arguments
 
-"`bash
+```bash
   -h, --help            show this help message and exit
   -t TARGET, --target TARGET
                         Target website
@@ -63,10 +63,7 @@ E.g.:
 ### On a list of websites
 
 1) Obtain the list of sites:
-From the Tranco site, it is possible to download the most recent list of the Top 1 million websites:
-https://tranco-list.eu
-
-The script expects to receive a list of sites with the same Tranco list format, although a slice of the list (e.g. first 30 sites) could be provided to the script.
+On the Tranco site, it is possible to download the most recent list of the Top 1 million websites: <https://tranco-list.eu/latest_list>. The script expects to receive a list of sites with the same Tranco list format, although a slice of the list (e.g. first 30 sites) could be provided to the script.
 
 2) Run the script: `python3 launcher.py --sites <sites_file>`
 
@@ -74,7 +71,7 @@ The launcher will test the websites in the file concurrently (up to the maximum 
 
 #### Launcher arguments
 
-"`bash
+```bash
   -h, --help            show this help message and exit
   -s SITES, --sites SITES
                         Sites list
@@ -93,16 +90,17 @@ The structure of the output JSON file of the `idps-identification.py` script dif
 
 Run the script: `/convert.sh <sites_file_list>`
 
-The sites file list that is provided to the convert.sh script should follow the same format of the Tranco List
+The sites file list that is provided to the convert.sh script should follow the same format csv of the Tranco List.
 
-which:
+The script:
+
 1. Calls `generate-sites-files.py` to generate the single JSON files with the structure needed by the next step
 
 2. Calls `merge-sites-files.py` to merge the single JSON files into a single one (json/sites.json).
 
 ## Notice
 
-The script has a high number of false-positives rates. In our research, this has not been a problem since this was only the first step and, in the next one, we used an automated browser to click on the buttons detected by this script to check whether they are OAuth buttons or not. In this script, we prioritized not missing any OAuth button, even if this means having many false positives. Improving the blacklists to reduce the false-positives rate is recommended if this script is used for other purposes.
+The script has a high number of false-positives rates. In our research, this has not been a problem since this was only the first step and, in the next one, we used an automated browser to click on the buttons detected by this script to check whether they are OAuth buttons or not. In this script, we prioritized not missing any OAuth button, even if this means having many false positives. Improving the denylists to reduce the false-positives rate is recommended if this script is used for other purposes.
 
 
 # OAuth trigger validation
@@ -114,19 +112,19 @@ The results are the list of the site's OAuth trigger evaluated (Verified_Sites.j
 
 On a high level, the script does the following:
 
-1)surf over the login page of the site and one by one exercise the OAuth trigger identified previously
-2)the script looks for changes in the browser, such as a new tab opening or a change of the page URL
-3)if the change occurs, it evaluates the landing page and searches for login page identifier as the presence of the login button and OAuth identifiers in the page URL
+1) surf over the login page of the site and one by one exercise the OAuth trigger identified previously
+2) the script looks for changes in the browser, such as a new tab opening or a change of the page URL
+3) if the change occurs, it evaluates the landing page and searches for login page identifier as the presence of the login button and OAuth identifiers in the page URL
 
 Output:
 The output folder contains a series of files with the result for each error type. In the script folder, the file Verified_Sites.json will include the site's login pages with the OAuth trigger correctly functioning and the file Top_Idps.json will contain the list of most used IdPs among the sites inspected.
 
 ## How to run it
 
-1)Install NodeJS from https://nodejs.org/en/download/.
+1) Install NodeJS from https://nodejs.org/en/download/.
 Then, run the following command to install all the dependencies:
 
-npm install chrome-launcher chrome-remote-interface url-parse until tldjs path argparse puppeteer fs
+`npm install chrome-launcher chrome-remote-interface url-parse until tldjs path argparse puppeteer fs``
 
 Adjust the Chrome executable path in verifysites.js at line 81 to point to the Chrome executable file
 Run the script: `python3 Start-SitesVerification.py <sites file.json> <output folder>`
@@ -156,7 +154,7 @@ The structure of the file is described below.
 
 We provide a limited number of IdPs info to avoid any potential blockage by the IdPs for suspicious login from unrecognized location, which could negatively affect other ongoing research project that currently uses these test accounts.
 
-## IdPs_info file:
+## IdPs_info file
 
 The IdPs information file contains the IdPs login information as the credential and the steps to perform the login flow.
 The fields *-Type can have an attribute: ID, Name, ClassName or exception.
@@ -164,7 +162,7 @@ Each represents the type of the element's attribute the crawler will use to iden
 The Button-Type extends the available attributes to XPath and QuerySelector. Representing the xpath of the element or the query for the selector which identifies the element in the page.
 The exception type allows flexibility in the configuration of the action performed by the crawler to accommodate any possible variation in the login procedure between IdPs. 
 
-e.g:fill%%Name%%loginfmt%%test@example.com##sleep3##click%%ID%%idSIButton9%%login##sleep3"
+e.g: `fill%%Name%%loginfmt%%test@example.com##sleep3##click%%ID%%idSIButton9%%login##sleep3"`
 this exception allows one to fill out the username form and click over the button with ID idSIButton9 before filling the password field.
 
 The exception could contain any set of instructions among fill, click, or sleep.
@@ -185,6 +183,7 @@ Example:
 
 
 #### Scripts arguments
+
 <sites file> file containing sites information (login pages) with OAuth trigger information for each IdP identified
 
 <measurements name> experiment name used for log purpose
@@ -224,6 +223,7 @@ To identify the IdPs vulnerable to the OPP attack, we implemented a testing Clie
 The number of IdPs vulnerable represents the result reported in Section 5.2.
 
 ## How to run it
+
 The execution of the test is relatively simple and does not involve any automation of the procedure.
 
 Before running the script, a folder named templates needs to be created, and the files attack.html and login.html should be placed inside of it
@@ -236,6 +236,7 @@ Any changes to these methods should be performed in the application code.
 The complete cases for each IdP can be tested and inspected using the available requ
 
 ## Notice
+
 We provide only the skeleton of a testing Client application (Facebook, for example) we used to test each IdP.
 For each IdP it is necessary to create a new configuration file with the IdP, which will include the registered redirect_uri and provide the Client_ID and the Client_secret that should be included in the application code to work correctly.
 For Facebook, the instructions to create such a configuration could be found here:
@@ -256,8 +257,8 @@ Once the application parameters (line 16 to 25) has been included, the script ca
 # redirect URI Validation in Redeem Proces:
 
 ## How does it work
+
 By reusing the Client Application used in the previous step to identify the IdPs vulnerable to the OPP attack, we measured the IdPs that improperly validate the redirect_uri in the Redeem Process.
 We followed the same methodology of the previous step by injecting an OAuth code in the Authorization step. Once we receive the two OAuth code parameters, we initiate the redeem step with the newly generated code by the IdP with an untouched redeem request. This will create a difference between the redirect_uri used in the Authorization request(poisoned) and the one provided in the Access Token request. The IdPs that allow the flow to proceed are marked as vulnerable. This will give the result of Section 6.2
-
 
 The execution of the test is relatively simple and does not involve any automation of the procedure.
