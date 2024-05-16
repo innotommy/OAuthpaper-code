@@ -20,7 +20,7 @@ request_url = 'https://graph.facebook.com/v16.0/me'
 redirect_uri = f'{ngrok}/login/oauth/authorize'
 
 client_id = '937387930629121'
-client_secret = 'd266fe3d16cac5dcab105d9ec57e7676'
+client_secret = 'REDACTED'
 scope = 'email'
 inject_code = '1234567890'
 
